@@ -6,10 +6,9 @@
   ],
   [
     { "label": "symbol_alpha", "width": 0.15 },
-    { "$": "variation_selector",
-      "default":  { "label": "comma" },
-      "email":    { "label": "@", "groupId": 1, "type": "function" },
-      "uri":      { "label": "/", "groupId": 1, "type": "function" }
+    { "$": "variation_selector", "default":  { "label": ",", "type": "function", "popup": { "main": { "label": "paste" }, "relevant": [ { "label": "emoji" }, { "label": "language_switch" }, { "label": "one_handed" }, { "label": "settings" }]}},
+      "email":    { "label": "@", "type": "function", "popup": { "main": { "label": "paste" }, "relevant": [ { "label": "emoji" }, { "label": "language_switch" }, { "label": "one_handed" }, { "label": "settings" }]} },
+      "uri":      { "label": "/", "type": "function", "popup": { "main": { "label": "paste" }, "relevant": [ { "label": "emoji" }, { "label": "language_switch" }, { "label": "one_handed" }, { "label": "settings" }]} }
     },
     { "$": "keyboard_state_selector", "languageKeyEnabled": { "$": "keyboard_state_selector", "alphabet": { "label": "language_switch" }}},
     { "$": "keyboard_state_selector", "emojiKeyEnabled": { "$": "keyboard_state_selector", "alphabet": { "label": "emoji" }}},
