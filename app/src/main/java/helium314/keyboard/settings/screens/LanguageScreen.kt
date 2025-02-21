@@ -33,6 +33,7 @@ import helium314.keyboard.latin.settings.USER_DICTIONARY_SUFFIX
 import helium314.keyboard.latin.utils.DictionaryInfoUtils
 import helium314.keyboard.latin.utils.Log
 import helium314.keyboard.latin.utils.SettingsSubtype.Companion.toSettingsSubtype
+import helium314.keyboard.latin.utils.SubtypeLocaleUtils
 import helium314.keyboard.latin.utils.SubtypeSettings
 import helium314.keyboard.latin.utils.SubtypeUtilsAdditional
 import helium314.keyboard.latin.utils.displayName
@@ -67,7 +68,6 @@ fun LanguageScreen(
             }
         },
         filteredItems = { term ->
-            // todo: maybe better performance with display name cache?
             sortedSubtypes.filter {
                 it.displayName(ctx).replace("(", "")
                     .splitOnWhitespace().any { it.startsWith(term, true) }
@@ -85,7 +85,7 @@ fun LanguageScreen(
                     Text(item.displayName(ctx), style = MaterialTheme.typography.bodyLarge)
                     val description = item.getExtraValueOf(ExtraValue.SECONDARY_LOCALES)?.split(Separators.KV)
                         ?.joinToString(", ") { LocaleUtils.getLocaleDisplayNameInSystemLocale(it.constructLocale(), ctx) }
-                    if (description != null)
+                    if (description != null) // todo: description should clarify when it's a default subtype that can't be changed / will be cloned
                         Text(
                             text = description,
                             style = MaterialTheme.typography.bodyMedium,
@@ -96,7 +96,7 @@ fun LanguageScreen(
                     checked = item in SubtypeSettings.getEnabledSubtypes(prefs),
                     onCheckedChange = {
                         if (it) SubtypeSettings.addEnabledSubtype(prefs, item)
-                        else SubtypeSettings.removeEnabledSubtype(prefs, item)
+                        else SubtypeSettings.removeEnabledSubtype(ctx, item)
                     }
                 )
             }
@@ -107,8 +107,7 @@ fun LanguageScreen(
         SubtypeDialog(
             onDismissRequest = { selectedSubtype = null },
             onConfirmed = {
-                // todo: this does not work when "modifying" a resource subtype
-                SubtypeUtilsAdditional.changeAdditionalSubtype(oldSubtype.toSettingsSubtype(), it, prefs)
+                SubtypeUtilsAdditional.changeAdditionalSubtype(oldSubtype.toSettingsSubtype(), it, ctx)
                 sortedSubtypes = getSortedSubtypes(ctx)
             },
             subtype = oldSubtype
@@ -116,7 +115,7 @@ fun LanguageScreen(
     }
 }
 
-// todo: sorting is slow, need to cache displayName (overall or just in getSortedSubtypes), and then it should be fine
+// sorting by display name is still slow, even with the cache... but probably good enough
 private fun getSortedSubtypes(context: Context): List<InputMethodSubtype> {
     val systemLocales = SubtypeSettings.getSystemLocales()
     val enabledSubtypes = SubtypeSettings.getEnabledSubtypes(context.prefs(), true)
@@ -141,8 +140,8 @@ private fun getSortedSubtypes(context: Context): List<InputMethodSubtype> {
         { !(SubtypeSettings.isAdditionalSubtype(it) && !isDefaultSubtype(it) ) },
         {
             @Suppress("DEPRECATION")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) it.languageTag == "zz"
-            else it.locale == "zz"
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) it.languageTag == SubtypeLocaleUtils.NO_LANGUAGE
+            else it.locale == SubtypeLocaleUtils.NO_LANGUAGE
         },
         { it.displayName(context) }
     )

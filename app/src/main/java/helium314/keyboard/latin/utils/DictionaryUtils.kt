@@ -41,7 +41,8 @@ fun getDictionaryLocales(context: Context): MutableSet<Locale> {
 
 fun showMissingDictionaryDialog(context: Context, locale: Locale) {
     val prefs = context.prefs()
-    if (prefs.getBoolean(Settings.PREF_DONT_SHOW_MISSING_DICTIONARY_DIALOG, Defaults.PREF_DONT_SHOW_MISSING_DICTIONARY_DIALOG) || locale.toString() == "zz")
+    if (prefs.getBoolean(Settings.PREF_DONT_SHOW_MISSING_DICTIONARY_DIALOG, Defaults.PREF_DONT_SHOW_MISSING_DICTIONARY_DIALOG)
+        || locale.toString() == SubtypeLocaleUtils.NO_LANGUAGE)
         return
     val repositoryLink = "<a href='$DICTIONARY_URL'>" + context.getString(R.string.dictionary_link_text) + "</a>"
     val dictionaryLink = "<a href='$DICTIONARY_URL/src/branch/main/dictionaries/main_$locale.dict'>" + context.getString(
@@ -105,7 +106,9 @@ fun cleanUnusedMainDicts(context: Context) {
     SubtypeSettings.getEnabledSubtypes(prefs).forEach { subtype ->
         val locale = subtype.locale()
         usedLocaleLanguageTags.add(locale.toLanguageTag())
-        Settings.getSecondaryLocales(prefs, locale).forEach { usedLocaleLanguageTags.add(it.toLanguageTag()) }
+    }
+    SubtypeSettings.getAdditionalSubtypes().forEach { subtype ->
+        getSecondaryLocales(subtype.extraValue).forEach { usedLocaleLanguageTags.add(it.toLanguageTag()) }
     }
     for (dir in dirs) {
         if (!dir.isDirectory) continue

@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodSubtype;
 
 import helium314.keyboard.compat.ConfigurationCompatKt;
 import helium314.keyboard.latin.R;
+import helium314.keyboard.latin.common.Constants;
 import helium314.keyboard.latin.common.LocaleUtils;
 import helium314.keyboard.latin.common.StringUtils;
 
@@ -56,6 +57,7 @@ public final class SubtypeLocaleUtils {
     private static final HashMap<String, Integer> sExceptionalLocaleToNameIdsMap = new HashMap<>();
     // Exceptional locale to subtype name with layout resource id map.
     private static final HashMap<String, Integer> sExceptionalLocaleToWithLayoutNameIdsMap = new HashMap<>();
+    private static final HashMap<Integer, String> sResourceSubtypeDisplayNames = new HashMap<>();
     private static final String SUBTYPE_NAME_RESOURCE_PREFIX = "string/subtype_";
     private static final String SUBTYPE_NAME_RESOURCE_GENERIC_PREFIX = "string/subtype_generic_";
     private static final String SUBTYPE_NAME_RESOURCE_WITH_LAYOUT_PREFIX = "string/subtype_with_layout_";
@@ -224,10 +226,35 @@ public final class SubtypeLocaleUtils {
     }
 
     @NonNull
-    public static String getSubtypeDisplayNameInSystemLocale(
-            @NonNull final InputMethodSubtype subtype) {
+    public static String getDisplayNameInSystemLocale(@NonNull final String mainLayoutName, @NonNull final Locale locale) {
+        final String displayName = getMainLayoutDisplayName(mainLayoutName);
+        if (displayName != null) // works for custom and latin layouts
+            return displayName;
+        // we have some locale-specific layout
+        for (InputMethodSubtype subtype : SubtypeSettings.INSTANCE.getResourceSubtypesForLocale(locale)) {
+            final String main = LayoutType.Companion.getMainLayoutFromExtraValue(subtype.getExtraValue());
+            if (mainLayoutName.equals(main))
+                return getSubtypeDisplayNameInSystemLocale(subtype);
+        }
+        return mainLayoutName; // should never happen...
+    }
+
+    @NonNull
+    public static String getSubtypeDisplayNameInSystemLocale(@NonNull final InputMethodSubtype subtype) {
+        final String cached = sResourceSubtypeDisplayNames.get(subtype.hashCode());
+        if (cached != null) return cached;
+
         final Locale displayLocale = ConfigurationCompatKt.locale(sResources.getConfiguration());
-        return getSubtypeDisplayNameInternal(subtype, displayLocale);
+        final String displayName = getSubtypeDisplayNameInternal(subtype, displayLocale);
+
+        if (!subtype.containsExtraValueKey(Constants.Subtype.ExtraValue.IS_ADDITIONAL_SUBTYPE)) {
+            sResourceSubtypeDisplayNames.put(subtype.hashCode(), displayName);
+        }
+        return displayName;
+    }
+
+    public static void clearDisplayNameCache() {
+        sResourceSubtypeDisplayNames.clear();
     }
 
     @NonNull
