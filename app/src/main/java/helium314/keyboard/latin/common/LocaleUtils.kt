@@ -181,10 +181,8 @@ object LocaleUtils {
         }
     }
 
-    @JvmStatic
-    fun getLocaleDisplayNameInSystemLocale(locale: Locale, context: Context): String {
-        return getLocaleDisplayNameInLocale(locale, context.resources, context.resources.configuration.locale())
-    }
+    fun Locale.localizedDisplayName(context: Context) =
+        getLocaleDisplayNameInLocale(this, context.resources, context.resources.configuration.locale())
 
     @JvmStatic
     fun getLocaleDisplayNameInLocale(locale: Locale, resources: Resources, displayLocale: Locale): String {
