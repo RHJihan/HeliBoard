@@ -19,7 +19,11 @@
   ],
   [
     { "$": "variation_selector",
-      "default": { "label": ",", "type": "numeric", "groupId": 1 },
+      "default": { "label": ",", "type": "numeric", "popup": { "main": { "label": "paste" }, "relevant": [
+        { "label": "!hasLabels!" },
+        { "label": "one_handed" },
+        { "label": "settings" }
+      ] } },
       "date": { "label": ".", "type": "numeric", "groupId": 1 },
       "time": { "label": ".", "type": "numeric", "groupId": 1, "popup": { "relevant": [
         { "label": "!fixedColumnOrder!2" },

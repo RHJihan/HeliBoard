@@ -20,7 +20,13 @@
   [
     { "label": "123|!code/key_switch_alpha_symbol", "type": "numeric", "labelFlags": 524432 },
     { "label": "+", "type": "numeric" },
-    { "label": ".", "type": "numeric", "groupId": 1 },
+    { "label": ".", "type": "numeric", "labelFlags": 64, "popup": { "main": { "label": "paste" },
+      "relevant": [
+        { "label": "language_switch" },
+        { "label": "one_handed" },
+        { "label": "settings" }
+        ]}},
     { "label": "action" }
   ]
 ]
+
