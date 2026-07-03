@@ -98,7 +98,7 @@ sealed interface KeyData : AbstractKeyData {
         private fun getCommaPopupKeys(params: KeyboardParams): List<String> {
             val keys = mutableListOf<String>()
             if (!params.mId.deviceLocked)
-                keys.add("!icon/clipboard_normal_key|!code/key_clipboard")
+                keys.add(ToolbarKey.PASTE.name.lowercase())
             if (!params.mId.emojiKeyEnabled && !params.mId.element.isNumberLayout)
                 keys.add("!icon/emoji_normal_key|!code/key_emoji")
             if (!params.mId.languageSwitchKeyEnabled && !params.mId.element.isNumberLayout && RichInputMethodManager.canSwitchLanguage())
