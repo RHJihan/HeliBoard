@@ -167,6 +167,35 @@ final class DynamicGridKeyboard extends Keyboard {
         }
     }
 
+    public boolean isRecents() {
+        return mIsRecents;
+    }
+
+    public void removeKey(final Key usedKey) {
+        synchronized (mLock) {
+            boolean removed = false;
+            while (mGridKeys.remove(usedKey)) {
+                // Remove all keys matching the removed one.
+                removed = true;
+            }
+            if (!removed) {
+                return;
+            }
+            mCachedGridKeys = null;
+            updateKeyCoordinates();
+        }
+        if (mIsRecents) {
+            saveRecentKeys();
+        }
+    }
+
+    public void clearRecentKeys() {
+        removeAllKeys();
+        if (mIsRecents) {
+            saveRecentKeys();
+        }
+    }
+
     private void addKey(final Key usedKey, final boolean addFirst) {
         if (usedKey == null) {
             return;
@@ -194,18 +223,22 @@ final class DynamicGridKeyboard extends Keyboard {
             while (mGridKeys.size() > mMaxKeyCount) {
                 mGridKeys.removeLast();
             }
-            int index = 0;
-            for (final GridKey gridKey : mGridKeys) {
-                while (mEmptyColumnIndices.contains(index % mColumnsNum)) {
-                    index++;
-                }
-                final int keyX0 = getKeyX0(index);
-                final int keyY0 = getKeyY0(index);
-                final int keyX1 = getKeyX1(index);
-                final int keyY1 = getKeyY1(index);
-                gridKey.updateCoordinates(keyX0, keyY0, keyX1, keyY1);
+            updateKeyCoordinates();
+        }
+    }
+
+    private void updateKeyCoordinates() {
+        int index = 0;
+        for (final GridKey gridKey : mGridKeys) {
+            while (mEmptyColumnIndices.contains(index % mColumnsNum)) {
                 index++;
             }
+            final int keyX0 = getKeyX0(index);
+            final int keyY0 = getKeyY0(index);
+            final int keyX1 = getKeyX1(index);
+            final int keyY1 = getKeyY1(index);
+            gridKey.updateCoordinates(keyX0, keyY0, keyX1, keyY1);
+            index++;
         }
     }
 

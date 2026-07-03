@@ -250,7 +250,11 @@ public class Key implements Comparable<Key> {
         mY = key.mY;
         mHitBox.set(key.mHitBox);
         mPopupKeys = popupKeys;
-        mPopupKeysColumnAndFlags = key.mPopupKeysColumnAndFlags;
+        // A key that is given popup keys needs at least one column to lay them out. The source key
+        // may report zero (e.g. emoji recent keys restored from settings), so ensure a valid count.
+        mPopupKeysColumnAndFlags = (popupKeys != null && (key.mPopupKeysColumnAndFlags & POPUP_KEYS_COLUMN_NUMBER_MASK) == 0)
+                ? (key.mPopupKeysColumnAndFlags & ~POPUP_KEYS_COLUMN_NUMBER_MASK) | 1
+                : key.mPopupKeysColumnAndFlags;
         mBackgroundType = backgroundType;
         mActionFlags = key.mActionFlags;
         mKeyVisualAttributes = key.mKeyVisualAttributes;
