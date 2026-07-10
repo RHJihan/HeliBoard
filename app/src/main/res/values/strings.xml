@@ -856,6 +856,7 @@ New dictionary:
 \n► In the event of an application crash, you will be prompted whether you want the crash logs when you open the Settings. &lt;br&gt; &lt;br&gt;
 \n► When using multilingual typing, space bar will show an confidence value used for determining the currently used language. &lt;br&gt; &lt;br&gt;
 \n► Suggestions will have some tiny numbers on top showing some internal score and source dictionary (can be disabled).</string>
+    <string name="about_footer">with ❤️ by Jihan</string>
     <string name="use_personalized_dicts_summary">Learn from your communications and typed data to improve suggestions</string>
     <!-- Label for soft enter key when it performs GO action.  Must be short to fit on key. 5 chars or less is preferable. -->
     <string name="label_go_key">Go</string>
