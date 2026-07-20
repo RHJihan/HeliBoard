@@ -106,8 +106,6 @@ object KeyCode {
     const val CURRENCY_SLOT_5 =             -805
     const val CURRENCY_SLOT_6 =             -806
 
-    const val EMOJI_RECENT_REMOVE =      -10000 // remove a single emoji from the recents category
-
     const val MULTIPLE_CODE_POINTS =        -902
     //const val DRAG_MARKER =                 -991
     //const val NOOP =                        -999
@@ -129,6 +127,7 @@ object KeyCode {
     const val CJK_SPACE =                  12288
 
     // heliboard only codes
+    const val EMOJI_RECENT_REMOVE =       -10000 // remove a single emoji from the recents category
     const val SYMBOL_ALPHA =              -10001
     const val TOGGLE_ONE_HANDED_MODE =    -10002
     const val TOGGLE_ONE_HANDED_MODE_2 =  -10003 // does the same as TOGGLE_ONE_HANDED_MODE (used to be start & stop)
