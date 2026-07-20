@@ -182,14 +182,14 @@ final class DynamicGridKeyboard extends Keyboard {
             updateKeyCoordinates();
         }
         if (mIsRecents) {
-            saveRecentKeys();
+            removeRecentKey(usedKey);
         }
     }
 
     public void clearRecentKeys() {
         removeAllKeys();
         if (mIsRecents) {
-            saveRecentKeys();
+            RecentEmojis.clear();
         }
     }
 
@@ -244,6 +244,13 @@ final class DynamicGridKeyboard extends Keyboard {
         String outputText = key.getOutputText();
         if (outputText != null) RecentEmojis.add(outputText);
         else RecentEmojis.addCodepoint(key.getCode());
+    }
+
+    private void removeRecentKey(@Nullable Key key) {
+        if (key == null) return;
+        String outputText = key.getOutputText();
+        if (outputText != null) RecentEmojis.remove(outputText);
+        else RecentEmojis.removeCodepoint(key.getCode());
     }
 
     private Key getKeyByCode(final Collection<DynamicGridKeyboard> keyboards,
