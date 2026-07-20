@@ -216,7 +216,10 @@ public final class EmojiPageKeyboardView extends KeyboardView implements
     private PopupKeysPanel showRemoveKeyboard(@NonNull final Key key) {
         Keyboard popupKeysKeyboard = mPopupKeysKeyboardCache.get(key);
         if (popupKeysKeyboard == null) {
-            final Key removeKey = new DynamicGridKeyboard.GridKey(key, REMOVE_RECENT_POPUP_KEYS, null, key.getBackgroundType());
+            // A recent key restored from settings can report zero popup-key columns, which cannot
+            // lay out popup keys. Give the remove popup one column per delete button it contains.
+            final Key removeKey = new DynamicGridKeyboard.GridKey(key, REMOVE_RECENT_POPUP_KEYS, null,
+                    key.getBackgroundType(), REMOVE_RECENT_POPUP_KEYS.length);
             // The delete button is icon-only, so size the single-key popup explicitly instead of
             // measuring a label (which would divide by a zero base width). Fall back to the most
             // common key height so the width is always non-zero.

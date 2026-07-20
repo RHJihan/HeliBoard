@@ -337,6 +337,11 @@ final class DynamicGridKeyboard extends Keyboard {
             super(originalKey, popupKeys, labelHint, backgroundType);
         }
 
+        public GridKey(@NonNull final Key originalKey, @Nullable final PopupKeySpec[] popupKeys,
+             @Nullable final String labelHint, final int backgroundType, final int popupKeysColumnNumber) {
+            super(originalKey, popupKeys, labelHint, backgroundType, popupKeysColumnNumber);
+        }
+
         public void updateCoordinates(final int x0, final int y0, final int x1, final int y1) {
             mCurrentX = x0;
             mCurrentY = y0;
