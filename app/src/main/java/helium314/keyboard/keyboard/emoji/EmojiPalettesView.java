@@ -163,6 +163,16 @@ public final class EmojiPalettesView extends LinearLayout
             return mEmojiCategory.getShownCategories().get(position).getCategory().ordinal();
         }
 
+        /** Rebuild the recents page while it is the currently visible page. notifyItemChanged does not
+         *  rebind the current ViewPager2 page, so refresh its inner adapter directly (same as the
+         *  tab-change path in onViewDetachedFromWindow). No-op if recents is not currently bound. */
+        void refreshVisibleRecents() {
+            final RecyclerView recyclerView = mViews.get(mEmojiCategory.getRecentTabId());
+            if (recyclerView != null && recyclerView.getAdapter() != null) {
+                recyclerView.getAdapter().notifyDataSetChanged();
+            }
+        }
+
         private static RecyclerView getRecyclerView(View view) {
             return view.findViewById(R.id.emoji_keyboard_list);
         }
@@ -338,8 +348,13 @@ public final class EmojiPalettesView extends LinearLayout
     private void clearRecentKeys() {
         AudioAndHapticFeedbackManager.getInstance().performHapticAndAudioFeedback(KeyCode.NOT_SPECIFIED, this, HapticEvent.KEY_LONG_PRESS);
         getRecentsKeyboard().clearRecentKeys();
-        if (initialized)
+        if (initialized) {
+            // covers clearing while another tab is shown (recents rebinds when next displayed)...
             mPager.getAdapter().notifyItemChanged(mEmojiCategory.getRecentTabId());
+            // ...and clearing while the recents tab itself is visible (long-pressing its icon), where
+            // notifyItemChanged would not rebind the current page
+            ((PagerAdapter) mPager.getAdapter()).refreshVisibleRecents();
+        }
     }
 
     @Override
